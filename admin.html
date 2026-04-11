@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shoppsafe Admin</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="container admin-page">
+      <section class="card" id="login-card">
+        <h1>Admin Login</h1>
+        <p>Sign in to manage issues and affiliate links.</p>
+        <form id="login-form" class="entry-grid">
+          <div>
+            <label for="username">Username</label>
+            <input id="username" name="username" type="text" required />
+          </div>
+          <div>
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" required />
+          </div>
+          <button type="submit">Log in</button>
+        </form>
+        <p id="login-message" class="hint"></p>
+      </section>
+
+      <section class="card hidden" id="admin-card">
+        <div class="admin-header">
+          <h2>Data Spreadsheet</h2>
+          <div class="admin-actions">
+            <button id="download-btn" type="button">Download JSON</button>
+            <button id="logout-btn" type="button">Log out</button>
+          </div>
+        </div>
+
+        <form id="entry-form" class="entry-grid">
+          <div>
+            <label for="issue">Issue</label>
+            <input id="issue" name="issue" type="text" placeholder="vegan" required />
+          </div>
+          <div>
+            <label for="storeName">Store name</label>
+            <input id="storeName" name="storeName" type="text" required />
+          </div>
+          <div>
+            <label for="description">Store description</label>
+            <input id="description" name="description" type="text" required />
+          </div>
+          <div>
+            <label for="url">Store link / affiliate link</label>
+            <input id="url" name="url" type="url" required />
+          </div>
+          <label class="checkbox-row" for="affiliate">
+            <input id="affiliate" name="affiliate" type="checkbox" />
+            Mark as affiliate link
+          </label>
+          <button type="submit">Add row</button>
+        </form>
+
+        <section class="upload-box">
+          <h3>Bulk upload (CSV)</h3>
+          <p class="hint">Use columns: <code>issue,name,reason,url,affiliate</code></p>
+          <input id="csv-file" type="file" accept=".csv,text/csv" />
+          <button id="upload-btn" type="button">Upload CSV</button>
+          <p id="upload-message" class="hint"></p>
+        </section>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Issue</th>
+                <th>Store</th>
+                <th>Description</th>
+                <th>Link</th>
+                <th>Affiliate</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <p><a href="index.html">← Back to homepage</a></p>
+    </main>
+
+    <script src="admin.js"></script>
+  </body>
+</html>
