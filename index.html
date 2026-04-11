@@ -10,6 +10,7 @@
     <a class="admin-entry" href="admin.html" aria-label="Open admin page" title="Admin">
       <span aria-hidden="true">☑</span>
       <span>Admin</span>
+      ☑
     </a>
 
     <header class="hero">
@@ -25,10 +26,10 @@
     <main class="container">
       <section class="card">
         <h2>Find aligned shops</h2>
-        <p>Select a social issue to browse shops connected to that issue.</p>
+        <p>Select a category to browse shops for that issue.</p>
 
         <form id="issue-form">
-          <label for="issue-select">Social issue</label>
+          <label for="issue-select">Category</label>
           <div class="input-row">
             <select id="issue-select" name="issue" required></select>
             <button type="submit">Show shops</button>
@@ -36,6 +37,24 @@
         </form>
 
         <p class="hint" id="issues-hint"></p>
+        <p>
+          Type a social issue and we’ll show shops that are currently marked as
+          <strong>not supporting</strong> that issue.
+        </p>
+        <form id="issue-form">
+          <label for="issue-input">Social issue</label>
+          <div class="input-row">
+            <input
+              id="issue-input"
+              name="issue"
+              type="text"
+              placeholder="e.g., vegan"
+              required
+            />
+            <button type="submit">Search shops</button>
+          </div>
+        </form>
+        <p class="hint">Try: <button class="linkish" data-fill="vegan">vegan</button>, <button class="linkish" data-fill="fast fashion">fast fashion</button>, <button class="linkish" data-fill="animal testing">animal testing</button>.</p>
       </section>
 
       <section class="card hidden" id="results-section">

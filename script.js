@@ -41,6 +41,10 @@ const resultsSection = document.getElementById("results-section");
 const resultsCopy = document.getElementById("results-copy");
 const resultsList = document.getElementById("results-list");
 const issuesHint = document.getElementById("issues-hint");
+const input = document.getElementById("issue-input");
+const resultsSection = document.getElementById("results-section");
+const resultsCopy = document.getElementById("results-copy");
+const resultsList = document.getElementById("results-list");
 
 function normalizeIssue(text) {
   return text.trim().toLowerCase();
@@ -78,16 +82,9 @@ function getCombinedData() {
   return combined;
 }
 
-function renderIssueDropdown() {
+function renderCategoryDropdown() {
   const allIssues = Object.keys(getCombinedData()).sort();
   issueSelect.innerHTML = "";
-
-  const placeholder = document.createElement("option");
-  placeholder.value = "";
-  placeholder.textContent = "Select a social issue";
-  placeholder.disabled = true;
-  placeholder.selected = true;
-  issueSelect.appendChild(placeholder);
 
   allIssues.forEach((issue) => {
     const option = document.createElement("option");
@@ -96,7 +93,7 @@ function renderIssueDropdown() {
     issueSelect.appendChild(option);
   });
 
-  issuesHint.textContent = `Available social issues: ${allIssues.join(", ")}`;
+  issuesHint.textContent = `Available categories: ${allIssues.join(", ")}`;
 }
 
 function renderResults(issue, shops) {
@@ -129,6 +126,7 @@ function renderResults(issue, shops) {
 form.addEventListener("submit", (event) => {
   event.preventDefault();
   const issue = normalizeIssue(issueSelect.value);
+  const issue = normalizeIssue(input.value);
   const combinedData = getCombinedData();
   renderResults(issue, combinedData[issue]);
 });
@@ -137,9 +135,15 @@ issueSelect.addEventListener("change", () => {
   form.requestSubmit();
 });
 
-renderIssueDropdown();
-if (issueSelect.options.length > 1) {
-  issueSelect.selectedIndex = 1;
+renderCategoryDropdown();
+if (issueSelect.value) {
   form.requestSubmit();
 }
+document.querySelectorAll(".linkish").forEach((button) => {
+  button.addEventListener("click", () => {
+    input.value = button.dataset.fill;
+    form.requestSubmit();
+  });
+});
+
 document.getElementById("year").textContent = new Date().getFullYear();
