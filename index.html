@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shoppsafe | Shop with a purpose</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <div class="container">
+        <p class="eyebrow">Shoppsafe</p>
+        <h1>Shop with a purpose.</h1>
+        <p class="subtitle">
+          Discover online stores that align with causes you care about.
+        </p>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="card">
+        <h2>Find aligned shops</h2>
+        <p>
+          Type a social issue and we’ll show shops that are currently marked as
+          <strong>not supporting</strong> that issue.
+        </p>
+        <form id="issue-form">
+          <label for="issue-input">Social issue</label>
+          <div class="input-row">
+            <input
+              id="issue-input"
+              name="issue"
+              type="text"
+              placeholder="e.g., israel war"
+              required
+            />
+            <button type="submit">Search shops</button>
+          </div>
+        </form>
+        <p class="hint">Try: <button class="linkish" data-fill="israel war">israel war</button>, <button class="linkish" data-fill="fast fashion">fast fashion</button>, <button class="linkish" data-fill="animal testing">animal testing</button>.</p>
+      </section>
+
+      <section class="card hidden" id="results-section">
+        <h2>Suggested shops</h2>
+        <p id="results-copy"></p>
+        <ul id="results-list" class="results-list"></ul>
+      </section>
+
+      <section class="card note">
+        <h3>Important transparency note</h3>
+        <p>
+          This prototype uses sample data only. Before publishing, add a clear
+          methodology, evidence links, and a review process for each listing.
+          Affiliate links should be disclosed to users.
+        </p>
+      </section>
+    </main>
+
+    <footer class="container footer">
+      <small>© <span id="year"></span> Shoppsafe</small>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
