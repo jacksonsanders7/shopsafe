@@ -36,12 +36,15 @@ const issueDatabase = {
 };
 
 const form = document.getElementById("issue-form");
-const issueInput = document.getElementById("issue-input");
-const suggestionsEl = document.getElementById("suggestions");
+const issueSelect = document.getElementById("issue-select");
 const resultsSection = document.getElementById("results-section");
 const resultsCopy = document.getElementById("results-copy");
 const resultsList = document.getElementById("results-list");
 const issuesHint = document.getElementById("issues-hint");
+const input = document.getElementById("issue-input");
+const resultsSection = document.getElementById("results-section");
+const resultsCopy = document.getElementById("results-copy");
+const resultsList = document.getElementById("results-list");
 
 function normalizeIssue(text) {
   return text.trim().toLowerCase();
@@ -79,46 +82,18 @@ function getCombinedData() {
   return combined;
 }
 
-function getAllIssues() {
-  return Object.keys(getCombinedData()).sort();
-}
+function renderCategoryDropdown() {
+  const allIssues = Object.keys(getCombinedData()).sort();
+  issueSelect.innerHTML = "";
 
-function updateIssuesHint() {
-  issuesHint.textContent = `Available social issues: ${getAllIssues().join(", ")}`;
-}
-
-function hideSuggestions() {
-  suggestionsEl.innerHTML = "";
-  suggestionsEl.classList.add("hidden");
-}
-
-function renderSuggestions(query) {
-  const normalized = normalizeIssue(query);
-  if (!normalized) {
-    hideSuggestions();
-    return;
-  }
-
-  const matches = getAllIssues().filter((issue) => issue.includes(normalized)).slice(0, 8);
-  suggestionsEl.innerHTML = "";
-
-  if (!matches.length) {
-    hideSuggestions();
-    return;
-  }
-
-  matches.forEach((issue) => {
-    const li = document.createElement("li");
-    li.textContent = issue;
-    li.addEventListener("mousedown", () => {
-      issueInput.value = issue;
-      hideSuggestions();
-      form.requestSubmit();
-    });
-    suggestionsEl.appendChild(li);
+  allIssues.forEach((issue) => {
+    const option = document.createElement("option");
+    option.value = issue;
+    option.textContent = issue;
+    issueSelect.appendChild(option);
   });
 
-  suggestionsEl.classList.remove("hidden");
+  issuesHint.textContent = `Available categories: ${allIssues.join(", ")}`;
 }
 
 function renderResults(issue, shops) {
@@ -130,7 +105,9 @@ function renderResults(issue, shops) {
     return;
   }
 
-  resultsCopy.textContent = `Found ${shops.length} shop${shops.length > 1 ? "s" : ""} for “${issue}”.`;
+  resultsCopy.textContent = `Found ${shops.length} shop${
+    shops.length > 1 ? "s" : ""
+  } for “${issue}”.`;
 
   shops.forEach((shop) => {
     const li = document.createElement("li");
@@ -148,19 +125,25 @@ function renderResults(issue, shops) {
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
-  const issue = normalizeIssue(issueInput.value);
+  const issue = normalizeIssue(issueSelect.value);
+  const issue = normalizeIssue(input.value);
   const combinedData = getCombinedData();
   renderResults(issue, combinedData[issue]);
-  hideSuggestions();
 });
 
-issueInput.addEventListener("input", () => {
-  renderSuggestions(issueInput.value);
+issueSelect.addEventListener("change", () => {
+  form.requestSubmit();
 });
 
-issueInput.addEventListener("blur", () => {
-  setTimeout(hideSuggestions, 120);
+renderCategoryDropdown();
+if (issueSelect.value) {
+  form.requestSubmit();
+}
+document.querySelectorAll(".linkish").forEach((button) => {
+  button.addEventListener("click", () => {
+    input.value = button.dataset.fill;
+    form.requestSubmit();
+  });
 });
 
-updateIssuesHint();
 document.getElementById("year").textContent = new Date().getFullYear();

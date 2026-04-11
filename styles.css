@@ -33,6 +33,10 @@ body {
   align-items: center;
   gap: 0.4rem;
   padding: 0.45rem 0.7rem;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
   border: 1px solid var(--accent);
   border-radius: 10px;
   text-decoration: none;
@@ -40,6 +44,7 @@ body {
   background: rgba(25, 29, 52, 0.85);
   font-size: 1rem;
   font-weight: 700;
+  font-size: 1.4rem;
 }
 
 .hero {
@@ -96,6 +101,7 @@ button {
 
 input,
 select {
+input {
   background: #0d1020;
   color: var(--text);
   width: 100%;
@@ -217,6 +223,7 @@ code {
 
 .checkbox-row input,
 select {
+.checkbox-row input {
   width: auto;
 }
 
@@ -246,34 +253,4 @@ td {
     right: 0.6rem;
     top: 0.6rem;
   }
-}
-
-
-.search-wrap {
-  position: relative;
-}
-
-.suggestions {
-  position: absolute;
-  top: calc(100% + 0.3rem);
-  left: 0;
-  right: 0;
-  list-style: none;
-  margin: 0;
-  padding: 0.25rem 0;
-  background: #12162a;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  z-index: 20;
-  max-height: 220px;
-  overflow: auto;
-}
-
-.suggestions li {
-  padding: 0.5rem 0.75rem;
-  cursor: pointer;
-}
-
-.suggestions li:hover {
-  background: #1a2140;
 }
