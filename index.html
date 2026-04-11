@@ -8,8 +8,7 @@
   </head>
   <body>
     <a class="admin-entry" href="admin.html" aria-label="Open admin page" title="Admin">
-      <span aria-hidden="true">☑</span>
-      <span>Admin</span>
+      ☑
     </a>
 
     <header class="hero">
@@ -36,17 +35,13 @@
               id="issue-input"
               name="issue"
               type="text"
-              placeholder="e.g., israel war"
-              list="issue-suggestions"
-              autocomplete="off"
+              placeholder="e.g., vegan"
               required
             />
             <button type="submit">Search shops</button>
           </div>
         </form>
-        <datalist id="issue-suggestions"></datalist>
         <p class="hint">Try: <button class="linkish" data-fill="vegan">vegan</button>, <button class="linkish" data-fill="fast fashion">fast fashion</button>, <button class="linkish" data-fill="animal testing">animal testing</button>.</p>
-        <p class="hint" id="issues-hint"></p>
       </section>
 
       <section class="card hidden" id="results-section">

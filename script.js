@@ -1,14 +1,6 @@
 const STORAGE_KEY = "shoppsafe_admin_data";
 
 const issueDatabase = {
-  "israel war": [
-    {
-      name: "No War Store",
-      url: "https://example.com/no-war-store",
-      reason: "Published anti-war donation policy and neutrality statement.",
-      affiliate: false,
-    },
-  ],
   vegan: [
     {
       name: "Plant Pantry",
@@ -40,8 +32,6 @@ const input = document.getElementById("issue-input");
 const resultsSection = document.getElementById("results-section");
 const resultsCopy = document.getElementById("results-copy");
 const resultsList = document.getElementById("results-list");
-const issuesHint = document.getElementById("issues-hint");
-const suggestionsList = document.getElementById("issue-suggestions");
 
 function normalizeIssue(text) {
   return text.trim().toLowerCase();
@@ -77,24 +67,6 @@ function getCombinedData() {
   });
 
   return combined;
-}
-
-
-
-function updateSuggestions() {
-  const allIssues = Object.keys(getCombinedData()).sort();
-  suggestionsList.innerHTML = "";
-
-  allIssues.forEach((issue) => {
-    const option = document.createElement("option");
-    option.value = issue;
-    suggestionsList.appendChild(option);
-  });
-}
-
-function renderIssuesHint() {
-  const allIssues = Object.keys(getCombinedData()).sort();
-  issuesHint.textContent = `Available issues: ${allIssues.join(", ")}`;
 }
 
 function renderResults(issue, shops) {
@@ -138,6 +110,4 @@ document.querySelectorAll(".linkish").forEach((button) => {
   });
 });
 
-updateSuggestions();
-renderIssuesHint();
 document.getElementById("year").textContent = new Date().getFullYear();

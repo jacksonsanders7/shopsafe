@@ -14,7 +14,6 @@ const uploadBtn = document.getElementById("upload-btn");
 const csvFileInput = document.getElementById("csv-file");
 const uploadMessage = document.getElementById("upload-message");
 const downloadBtn = document.getElementById("download-btn");
-const entryMessage = document.getElementById("entry-message");
 
 function getRows() {
   try {
@@ -157,10 +156,7 @@ entryForm.addEventListener("submit", (event) => {
   });
 
   if (ok) {
-    entryMessage.textContent = "Row added.";
     entryForm.reset();
-  } else {
-    entryMessage.textContent = "Could not add row. Check all fields and URL.";
   }
 });
 
