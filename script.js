@@ -36,12 +36,15 @@ const issueDatabase = {
 };
 
 const form = document.getElementById("issue-form");
-const issueInput = document.getElementById("issue-input");
+const issueSelect = document.getElementById("issue-select");
 const resultsSection = document.getElementById("results-section");
 const resultsCopy = document.getElementById("results-copy");
 const resultsList = document.getElementById("results-list");
 const issuesHint = document.getElementById("issues-hint");
-const suggestionsList = document.getElementById("issue-suggestions");
+const input = document.getElementById("issue-input");
+const resultsSection = document.getElementById("results-section");
+const resultsCopy = document.getElementById("results-copy");
+const resultsList = document.getElementById("results-list");
 
 function normalizeIssue(text) {
   return text.trim().toLowerCase();
@@ -79,17 +82,18 @@ function getCombinedData() {
   return combined;
 }
 
-function updateSuggestions() {
+function renderCategoryDropdown() {
   const allIssues = Object.keys(getCombinedData()).sort();
-  suggestionsList.innerHTML = "";
+  issueSelect.innerHTML = "";
 
   allIssues.forEach((issue) => {
     const option = document.createElement("option");
     option.value = issue;
-    suggestionsList.appendChild(option);
+    option.textContent = issue;
+    issueSelect.appendChild(option);
   });
 
-  issuesHint.textContent = `Available social issues: ${allIssues.join(", ")}`;
+  issuesHint.textContent = `Available categories: ${allIssues.join(", ")}`;
 }
 
 function renderResults(issue, shops) {
@@ -121,10 +125,25 @@ function renderResults(issue, shops) {
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
-  const issue = normalizeIssue(issueInput.value);
+  const issue = normalizeIssue(issueSelect.value);
+  const issue = normalizeIssue(input.value);
   const combinedData = getCombinedData();
   renderResults(issue, combinedData[issue]);
 });
 
-updateSuggestions();
+issueSelect.addEventListener("change", () => {
+  form.requestSubmit();
+});
+
+renderCategoryDropdown();
+if (issueSelect.value) {
+  form.requestSubmit();
+}
+document.querySelectorAll(".linkish").forEach((button) => {
+  button.addEventListener("click", () => {
+    input.value = button.dataset.fill;
+    form.requestSubmit();
+  });
+});
+
 document.getElementById("year").textContent = new Date().getFullYear();
