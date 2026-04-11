@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shoppsafe | Shop with a purpose</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="admin-entry" href="admin.html" aria-label="Open admin page" title="Admin">
+      <span aria-hidden="true">☑</span>
+      <span>Admin</span>
+    </a>
+
+    <header class="hero">
+      <div class="container">
+        <p class="eyebrow">Shoppsafe</p>
+        <h1>Shop with a purpose.</h1>
+        <p class="subtitle">Search social issues and discover aligned stores.</p>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="card">
+        <h2>Find stores by social issue</h2>
+        <form id="issue-form" autocomplete="off">
+          <label for="issue-input">Social issue</label>
+          <div class="input-row">
+            <div class="search-wrap">
+              <input id="issue-input" type="text" placeholder="e.g., israel war" required />
+              <ul id="suggestions" class="suggestions hidden"></ul>
+            </div>
+            <button type="submit">Show stores</button>
+          </div>
+        </form>
+        <p id="issues-hint" class="hint"></p>
+      </section>
+
+      <section class="card hidden" id="results-section">
+        <h2>Suggested stores</h2>
+        <p id="results-copy"></p>
+        <ul id="results-list" class="results-list"></ul>
+      </section>
+    </main>
+
+    <footer class="container footer">© <span id="year"></span> Shoppsafe</footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
