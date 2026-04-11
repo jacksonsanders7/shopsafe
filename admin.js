@@ -161,6 +161,7 @@ entryForm.addEventListener("submit", (event) => {
     entryForm.reset();
   } else {
     entryMessage.textContent = "Could not add row. Check all fields and URL.";
+    entryForm.reset();
   }
 });
 
