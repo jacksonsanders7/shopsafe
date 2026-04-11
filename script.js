@@ -32,7 +32,6 @@ const input = document.getElementById("issue-input");
 const resultsSection = document.getElementById("results-section");
 const resultsCopy = document.getElementById("results-copy");
 const resultsList = document.getElementById("results-list");
-const issuesHint = document.getElementById("issues-hint");
 
 function normalizeIssue(text) {
   return text.trim().toLowerCase();
@@ -68,12 +67,6 @@ function getCombinedData() {
   });
 
   return combined;
-}
-
-
-function renderIssuesHint() {
-  const allIssues = Object.keys(getCombinedData()).sort();
-  issuesHint.textContent = `Available issues: ${allIssues.join(", ")}`;
 }
 
 function renderResults(issue, shops) {
@@ -117,5 +110,4 @@ document.querySelectorAll(".linkish").forEach((button) => {
   });
 });
 
-renderIssuesHint();
 document.getElementById("year").textContent = new Date().getFullYear();
