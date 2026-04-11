@@ -21,6 +21,26 @@ body {
 }
 
 .container {
+  width: min(960px, 92vw);
+  margin: 0 auto;
+}
+
+.admin-entry {
+  position: fixed;
+  right: 1rem;
+  top: 1rem;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--accent);
+  background: rgba(25, 29, 52, 0.85);
+  font-size: 1.4rem;
+}
+
   width: min(900px, 92vw);
   margin: 0 auto;
 }
@@ -79,6 +99,7 @@ button {
 input {
   background: #0d1020;
   color: var(--text);
+  width: 100%;
 }
 
 button {
@@ -122,6 +143,8 @@ button:hover {
   background: #12162a;
 }
 
+.results-list a,
+a {
 .results-list a {
   color: #9dd0ff;
 }
@@ -149,8 +172,59 @@ button:hover {
   color: var(--muted);
 }
 
+.admin-page {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.entry-grid {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.checkbox-row input {
+  width: auto;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  border: 1px solid var(--border);
+  padding: 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+
 @media (max-width: 640px) {
   .input-row {
     grid-template-columns: 1fr;
+  }
+
+  .admin-entry {
+    right: 0.6rem;
+    top: 0.6rem;
   }
 }

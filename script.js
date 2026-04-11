@@ -1,3 +1,11 @@
+const STORAGE_KEY = "shoppsafe_admin_data";
+
+const issueDatabase = {
+  vegan: [
+    {
+      name: "Plant Pantry",
+      url: "https://example.com/plant-pantry?ref=shoppsafe",
+      reason: "100% vegan catalogue and transparent sourcing.",
 const issueDatabase = {
   "israel war": [
     {
@@ -41,10 +49,43 @@ function normalizeIssue(text) {
   return text.trim().toLowerCase();
 }
 
+function getAdminRows() {
+  try {
+    const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    return Array.isArray(data) ? data : [];
+  } catch {
+    return [];
+  }
+}
+
+function getCombinedData() {
+  const combined = structuredClone(issueDatabase);
+  const rows = getAdminRows();
+
+  rows.forEach((row) => {
+    const issue = normalizeIssue(row.issue || "");
+    if (!issue) return;
+
+    if (!combined[issue]) {
+      combined[issue] = [];
+    }
+
+    combined[issue].push({
+      name: row.name,
+      url: row.url,
+      reason: row.reason,
+      affiliate: !!row.affiliate,
+    });
+  });
+
+  return combined;
+}
+
 function renderResults(issue, shops) {
   resultsList.innerHTML = "";
 
   if (!shops?.length) {
+    resultsCopy.textContent = `No matches yet for “${issue}”. Add a row in Admin.`;
     resultsCopy.textContent = `No matches yet for “${issue}”. Add review-backed shops to your dataset.`;
     resultsSection.classList.remove("hidden");
     return;
@@ -71,6 +112,8 @@ function renderResults(issue, shops) {
 form.addEventListener("submit", (event) => {
   event.preventDefault();
   const issue = normalizeIssue(input.value);
+  const combinedData = getCombinedData();
+  renderResults(issue, combinedData[issue]);
   renderResults(issue, issueDatabase[issue]);
 });
 

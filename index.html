@@ -7,6 +7,10 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <a class="admin-entry" href="admin.html" aria-label="Open admin page" title="Admin">
+      ☑
+    </a>
+
     <header class="hero">
       <div class="container">
         <p class="eyebrow">Shoppsafe</p>
@@ -31,12 +35,14 @@
               id="issue-input"
               name="issue"
               type="text"
+              placeholder="e.g., vegan"
               placeholder="e.g., israel war"
               required
             />
             <button type="submit">Search shops</button>
           </div>
         </form>
+        <p class="hint">Try: <button class="linkish" data-fill="vegan">vegan</button>, <button class="linkish" data-fill="fast fashion">fast fashion</button>, <button class="linkish" data-fill="animal testing">animal testing</button>.</p>
         <p class="hint">Try: <button class="linkish" data-fill="israel war">israel war</button>, <button class="linkish" data-fill="fast fashion">fast fashion</button>, <button class="linkish" data-fill="animal testing">animal testing</button>.</p>
       </section>
 
@@ -49,6 +55,7 @@
       <section class="card note">
         <h3>Important transparency note</h3>
         <p>
+          This prototype supports admin-added rows and affiliate links.
           This prototype uses sample data only. Before publishing, add a clear
           methodology, evidence links, and a review process for each listing.
           Affiliate links should be disclosed to users.
