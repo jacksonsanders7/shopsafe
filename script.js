@@ -1,6 +1,14 @@
 const STORAGE_KEY = "shoppsafe_admin_data";
 
 const issueDatabase = {
+  "israel war": [
+    {
+      name: "No War Store",
+      url: "https://example.com/no-war-store",
+      reason: "Published anti-war donation policy and neutrality statement.",
+      affiliate: false,
+    },
+  ],
   vegan: [
     {
       name: "Plant Pantry",
@@ -28,6 +36,11 @@ const issueDatabase = {
 };
 
 const form = document.getElementById("issue-form");
+const issueSelect = document.getElementById("issue-select");
+const resultsSection = document.getElementById("results-section");
+const resultsCopy = document.getElementById("results-copy");
+const resultsList = document.getElementById("results-list");
+const issuesHint = document.getElementById("issues-hint");
 const input = document.getElementById("issue-input");
 const resultsSection = document.getElementById("results-section");
 const resultsCopy = document.getElementById("results-copy");
@@ -69,6 +82,20 @@ function getCombinedData() {
   return combined;
 }
 
+function renderCategoryDropdown() {
+  const allIssues = Object.keys(getCombinedData()).sort();
+  issueSelect.innerHTML = "";
+
+  allIssues.forEach((issue) => {
+    const option = document.createElement("option");
+    option.value = issue;
+    option.textContent = issue;
+    issueSelect.appendChild(option);
+  });
+
+  issuesHint.textContent = `Available categories: ${allIssues.join(", ")}`;
+}
+
 function renderResults(issue, shops) {
   resultsList.innerHTML = "";
 
@@ -98,11 +125,20 @@ function renderResults(issue, shops) {
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
+  const issue = normalizeIssue(issueSelect.value);
   const issue = normalizeIssue(input.value);
   const combinedData = getCombinedData();
   renderResults(issue, combinedData[issue]);
 });
 
+issueSelect.addEventListener("change", () => {
+  form.requestSubmit();
+});
+
+renderCategoryDropdown();
+if (issueSelect.value) {
+  form.requestSubmit();
+}
 document.querySelectorAll(".linkish").forEach((button) => {
   button.addEventListener("click", () => {
     input.value = button.dataset.fill;

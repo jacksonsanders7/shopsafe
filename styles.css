@@ -29,6 +29,10 @@ body {
   position: fixed;
   right: 1rem;
   top: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.7rem;
   width: 42px;
   height: 42px;
   display: grid;
@@ -38,6 +42,8 @@ body {
   text-decoration: none;
   color: var(--accent);
   background: rgba(25, 29, 52, 0.85);
+  font-size: 1rem;
+  font-weight: 700;
   font-size: 1.4rem;
 }
 
@@ -85,6 +91,7 @@ label {
 }
 
 input,
+select,
 button {
   border-radius: 10px;
   border: 1px solid var(--border);
@@ -92,6 +99,8 @@ button {
   font-size: 1rem;
 }
 
+input,
+select {
 input {
   background: #0d1020;
   color: var(--text);
@@ -212,6 +221,8 @@ code {
   margin: 0;
 }
 
+.checkbox-row input,
+select {
 .checkbox-row input {
   width: auto;
 }

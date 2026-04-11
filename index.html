@@ -8,6 +8,8 @@
   </head>
   <body>
     <a class="admin-entry" href="admin.html" aria-label="Open admin page" title="Admin">
+      <span aria-hidden="true">☑</span>
+      <span>Admin</span>
       ☑
     </a>
 
@@ -24,6 +26,17 @@
     <main class="container">
       <section class="card">
         <h2>Find aligned shops</h2>
+        <p>Select a category to browse shops for that issue.</p>
+
+        <form id="issue-form">
+          <label for="issue-select">Category</label>
+          <div class="input-row">
+            <select id="issue-select" name="issue" required></select>
+            <button type="submit">Show shops</button>
+          </div>
+        </form>
+
+        <p class="hint" id="issues-hint"></p>
         <p>
           Type a social issue and we’ll show shops that are currently marked as
           <strong>not supporting</strong> that issue.
