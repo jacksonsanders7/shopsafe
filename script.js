@@ -41,6 +41,10 @@ const resultsSection = document.getElementById("results-section");
 const resultsCopy = document.getElementById("results-copy");
 const resultsList = document.getElementById("results-list");
 const issuesHint = document.getElementById("issues-hint");
+const input = document.getElementById("issue-input");
+const resultsSection = document.getElementById("results-section");
+const resultsCopy = document.getElementById("results-copy");
+const resultsList = document.getElementById("results-list");
 
 function normalizeIssue(text) {
   return text.trim().toLowerCase();
@@ -122,6 +126,7 @@ function renderResults(issue, shops) {
 form.addEventListener("submit", (event) => {
   event.preventDefault();
   const issue = normalizeIssue(issueSelect.value);
+  const issue = normalizeIssue(input.value);
   const combinedData = getCombinedData();
   renderResults(issue, combinedData[issue]);
 });
@@ -134,4 +139,11 @@ renderCategoryDropdown();
 if (issueSelect.value) {
   form.requestSubmit();
 }
+document.querySelectorAll(".linkish").forEach((button) => {
+  button.addEventListener("click", () => {
+    input.value = button.dataset.fill;
+    form.requestSubmit();
+  });
+});
+
 document.getElementById("year").textContent = new Date().getFullYear();

@@ -9,6 +9,8 @@ Shoppsafe is a starter website for discovering online shops that align with user
 - Homepage category dropdown by issue (easier browsing without typing).
 - Visible top-right **☑ Admin** button that opens `admin.html`.
 - Homepage shows all currently available issues (default + admin-added).
+- Homepage search by issue.
+- Admin icon (top-right checkmark box) that opens `admin.html`.
 - Admin login using:
   - Username: `BigJack`
   - Password: `SimgaTung123`
