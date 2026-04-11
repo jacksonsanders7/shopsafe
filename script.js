@@ -6,6 +6,18 @@ const issueDatabase = {
       name: "Plant Pantry",
       url: "https://example.com/plant-pantry?ref=shoppsafe",
       reason: "100% vegan catalogue and transparent sourcing.",
+const issueDatabase = {
+  "israel war": [
+    {
+      name: "Ethical Outfitters",
+      url: "https://example.com/ethical-outfitters?ref=shoppsafe",
+      reason: "Public neutrality statement and no political donations found.",
+      affiliate: true,
+    },
+    {
+      name: "Conscious Home Co.",
+      url: "https://example.com/conscious-home?ref=shoppsafe",
+      reason: "Published policy against funding armed conflict.",
       affiliate: true,
     },
   ],
@@ -74,6 +86,7 @@ function renderResults(issue, shops) {
 
   if (!shops?.length) {
     resultsCopy.textContent = `No matches yet for “${issue}”. Add a row in Admin.`;
+    resultsCopy.textContent = `No matches yet for “${issue}”. Add review-backed shops to your dataset.`;
     resultsSection.classList.remove("hidden");
     return;
   }
@@ -101,6 +114,7 @@ form.addEventListener("submit", (event) => {
   const issue = normalizeIssue(input.value);
   const combinedData = getCombinedData();
   renderResults(issue, combinedData[issue]);
+  renderResults(issue, issueDatabase[issue]);
 });
 
 document.querySelectorAll(".linkish").forEach((button) => {

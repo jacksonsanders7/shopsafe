@@ -41,6 +41,10 @@ body {
   font-size: 1.4rem;
 }
 
+  width: min(900px, 92vw);
+  margin: 0 auto;
+}
+
 .hero {
   padding: 3.25rem 0 1.75rem;
 }
@@ -141,6 +145,7 @@ button:hover {
 
 .results-list a,
 a {
+.results-list a {
   color: #9dd0ff;
 }
 
