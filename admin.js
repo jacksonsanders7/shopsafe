@@ -10,6 +10,10 @@ const entryForm = document.getElementById("entry-form");
 const rowsEl = document.getElementById("rows");
 const loginMessage = document.getElementById("login-message");
 const logoutBtn = document.getElementById("logout-btn");
+const uploadBtn = document.getElementById("upload-btn");
+const csvFileInput = document.getElementById("csv-file");
+const uploadMessage = document.getElementById("upload-message");
+const downloadBtn = document.getElementById("download-btn");
 
 function getRows() {
   try {
@@ -24,11 +28,33 @@ function saveRows(rows) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(rows));
 }
 
+function normalizeRow(row) {
+  return {
+    issue: String(row.issue || "").trim().toLowerCase(),
+    name: String(row.name || "").trim(),
+    reason: String(row.reason || "").trim(),
+    url: String(row.url || "").trim(),
+    affiliate: Boolean(row.affiliate),
+  };
+}
+
+function validRow(row) {
+  if (!row.issue || !row.name || !row.reason || !row.url) {
+    return false;
+  }
+  try {
+    new URL(row.url);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function renderTable() {
   const rows = getRows();
   rowsEl.innerHTML = "";
 
-  rows.forEach((row) => {
+  rows.forEach((row, index) => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${row.issue}</td>
@@ -36,6 +62,7 @@ function renderTable() {
       <td>${row.reason}</td>
       <td><a href="${row.url}" target="_blank" rel="noopener noreferrer">Link</a></td>
       <td>${row.affiliate ? "Yes" : "No"}</td>
+      <td><button type="button" data-delete-index="${index}">Delete</button></td>
     `;
     rowsEl.appendChild(tr);
   });
@@ -52,6 +79,55 @@ function setLoggedIn(isLoggedIn) {
     adminCard.classList.add("hidden");
     loginCard.classList.remove("hidden");
   }
+}
+
+function addRow(rawRow) {
+  const row = normalizeRow(rawRow);
+  if (!validRow(row)) {
+    return false;
+  }
+
+  const rows = getRows();
+  rows.push(row);
+  saveRows(rows);
+  renderTable();
+  return true;
+}
+
+function parseCsv(text) {
+  const lines = text
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  if (!lines.length) return [];
+
+  const [header, ...rest] = lines;
+  const columns = header.split(",").map((item) => item.trim().toLowerCase());
+  const indexMap = {
+    issue: columns.indexOf("issue"),
+    name: columns.indexOf("name"),
+    reason: columns.indexOf("reason"),
+    url: columns.indexOf("url"),
+    affiliate: columns.indexOf("affiliate"),
+  };
+
+  if (Object.values(indexMap).some((value) => value === -1)) {
+    return [];
+  }
+
+  return rest.map((line) => {
+    const values = line.split(",").map((item) => item.trim());
+    return {
+      issue: values[indexMap.issue],
+      name: values[indexMap.name],
+      reason: values[indexMap.reason],
+      url: values[indexMap.url],
+      affiliate: ["true", "1", "yes", "y"].includes(
+        (values[indexMap.affiliate] || "").toLowerCase()
+      ),
+    };
+  });
 }
 
 loginForm.addEventListener("submit", (event) => {
@@ -71,18 +147,68 @@ loginForm.addEventListener("submit", (event) => {
 entryForm.addEventListener("submit", (event) => {
   event.preventDefault();
 
-  const rows = getRows();
-  rows.push({
-    issue: document.getElementById("issue").value.trim().toLowerCase(),
-    name: document.getElementById("storeName").value.trim(),
-    reason: document.getElementById("description").value.trim(),
-    url: document.getElementById("url").value.trim(),
+  const ok = addRow({
+    issue: document.getElementById("issue").value,
+    name: document.getElementById("storeName").value,
+    reason: document.getElementById("description").value,
+    url: document.getElementById("url").value,
     affiliate: document.getElementById("affiliate").checked,
   });
 
+  if (ok) {
+    entryForm.reset();
+  }
+});
+
+rowsEl.addEventListener("click", (event) => {
+  const target = event.target;
+  if (!(target instanceof HTMLElement)) return;
+
+  const index = target.getAttribute("data-delete-index");
+  if (index === null) return;
+
+  const rows = getRows();
+  rows.splice(Number(index), 1);
   saveRows(rows);
   renderTable();
-  entryForm.reset();
+});
+
+uploadBtn.addEventListener("click", async () => {
+  uploadMessage.textContent = "";
+  const file = csvFileInput.files?.[0];
+
+  if (!file) {
+    uploadMessage.textContent = "Choose a CSV file first.";
+    return;
+  }
+
+  const text = await file.text();
+  const parsedRows = parseCsv(text);
+
+  if (!parsedRows.length) {
+    uploadMessage.textContent = "CSV format invalid. Required headers: issue,name,reason,url,affiliate";
+    return;
+  }
+
+  let added = 0;
+  parsedRows.forEach((row) => {
+    if (addRow(row)) added += 1;
+  });
+
+  uploadMessage.textContent = `Uploaded ${added} rows.`;
+  csvFileInput.value = "";
+});
+
+downloadBtn.addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(getRows(), null, 2)], {
+    type: "application/json",
+  });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "shoppsafe-data.json";
+  link.click();
+  URL.revokeObjectURL(url);
 });
 
 logoutBtn.addEventListener("click", () => {

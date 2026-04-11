@@ -11,11 +11,15 @@
       <section class="card" id="login-card">
         <h1>Admin Login</h1>
         <p>Sign in to manage issues and affiliate links.</p>
-        <form id="login-form">
-          <label for="username">Username</label>
-          <input id="username" name="username" type="text" required />
-          <label for="password">Password</label>
-          <input id="password" name="password" type="password" required />
+        <form id="login-form" class="entry-grid">
+          <div>
+            <label for="username">Username</label>
+            <input id="username" name="username" type="text" required />
+          </div>
+          <div>
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" required />
+          </div>
           <button type="submit">Log in</button>
         </form>
         <p id="login-message" class="hint"></p>
@@ -24,7 +28,10 @@
       <section class="card hidden" id="admin-card">
         <div class="admin-header">
           <h2>Data Spreadsheet</h2>
-          <button id="logout-btn" type="button">Log out</button>
+          <div class="admin-actions">
+            <button id="download-btn" type="button">Download JSON</button>
+            <button id="logout-btn" type="button">Log out</button>
+          </div>
         </div>
 
         <form id="entry-form" class="entry-grid">
@@ -51,6 +58,14 @@
           <button type="submit">Add row</button>
         </form>
 
+        <section class="upload-box">
+          <h3>Bulk upload (CSV)</h3>
+          <p class="hint">Use columns: <code>issue,name,reason,url,affiliate</code></p>
+          <input id="csv-file" type="file" accept=".csv,text/csv" />
+          <button id="upload-btn" type="button">Upload CSV</button>
+          <p id="upload-message" class="hint"></p>
+        </section>
+
         <div class="table-wrap">
           <table>
             <thead>
@@ -60,6 +75,7 @@
                 <th>Description</th>
                 <th>Link</th>
                 <th>Affiliate</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody id="rows"></tbody>
