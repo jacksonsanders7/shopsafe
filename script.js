@@ -1,3 +1,4 @@
+const TABLE = window.SHOPPSAFE_SUPABASE_TABLE || "shops";
 const issueDatabase = {
   "israel war": [
     { name: "No War Store", url: "https://example.com/no-war-store", reason: "Public anti-war neutrality statement.", affiliate: false },
@@ -23,14 +24,11 @@ const normalizeIssue = (text) => text.trim().toLowerCase();
 
 async function fetchSupabaseRows() {
   const { data, error } = await supabase
-    .from("shops")
+    .from(TABLE)
     .select("id, issue, name, reason, url, affiliate")
     .order("id", { ascending: true });
 
-  if (error) {
-    return { rows: [], error: error.message };
-  }
-
+  if (error) return { rows: [], error: error.message };
   return { rows: data || [], error: null };
 }
 
@@ -39,7 +37,7 @@ async function refreshData() {
   const { rows, error } = await fetchSupabaseRows();
 
   if (error) {
-    issuesHint.textContent = `Database fetch failed: ${error}`;
+    issuesHint.textContent = `Database fetch failed (${TABLE}): ${error}`;
     cachedData = combined;
     return;
   }
@@ -58,7 +56,8 @@ async function refreshData() {
   });
 
   cachedData = combined;
-  issuesHint.textContent = `Available social issues: ${Object.keys(cachedData).sort().join(", ")}`;
+  const keys = Object.keys(cachedData).sort();
+  issuesHint.textContent = `Connected to "${TABLE}". ${keys.length} issue${keys.length === 1 ? "" : "s"}: ${keys.join(", ")}`;
 }
 
 function hideSuggestions() {

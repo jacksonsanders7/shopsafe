@@ -1,6 +1,7 @@
 const ADMIN_USERNAME = "BigJack";
 const ADMIN_PASSWORD = "SimgaTung123";
 const SESSION_KEY = "shoppsafe_admin_logged_in";
+const TABLE = window.SHOPPSAFE_SUPABASE_TABLE || "shops";
 
 const supabase = window.supabase.createClient(
   window.SHOPPSAFE_SUPABASE_URL,
@@ -19,42 +20,36 @@ const dbStatus = document.getElementById("db-status");
 
 const csvInput = document.getElementById("csv-file");
 const uploadBtn = document.getElementById("upload-btn");
+const reloadBtn = document.getElementById("reload-btn");
 const downloadBtn = document.getElementById("download-btn");
 const logoutBtn = document.getElementById("logout-btn");
 
-function normalizeRow(row) {
-  return {
-    issue: String(row.issue || "").trim().toLowerCase(),
-    name: String(row.name || "").trim(),
-    reason: String(row.reason || "").trim(),
-    url: String(row.url || "").trim(),
-    affiliate: Boolean(row.affiliate),
-  };
-}
+const normalizeRow = (row) => ({
+  issue: String(row.issue || "").trim().toLowerCase(),
+  name: String(row.name || "").trim(),
+  reason: String(row.reason || "").trim(),
+  url: String(row.url || "").trim(),
+  affiliate: Boolean(row.affiliate),
+});
 
-function isValidUrl(value) {
+const isValidUrl = (value) => {
   try {
     new URL(value);
     return true;
   } catch {
     return false;
   }
-}
+};
 
-function isValidRow(row) {
-  return !!(row.issue && row.name && row.reason && row.url && isValidUrl(row.url));
-}
+const isValidRow = (row) => !!(row.issue && row.name && row.reason && row.url && isValidUrl(row.url));
 
 async function getRows() {
   const { data, error } = await supabase
-    .from("shops")
+    .from(TABLE)
     .select("id, issue, name, reason, url, affiliate")
     .order("id", { ascending: true });
 
-  if (error) {
-    return { rows: [], error: error.message };
-  }
-
+  if (error) return { rows: [], error: error.message };
   return { rows: data || [], error: null };
 }
 
@@ -63,11 +58,11 @@ async function renderTable() {
   const { rows, error } = await getRows();
 
   if (error) {
-    dbStatus.textContent = `Database read failed: ${error}`;
+    dbStatus.textContent = `Read failed (${TABLE}): ${error}`;
     return;
   }
 
-  dbStatus.textContent = `Connected. ${rows.length} row${rows.length === 1 ? "" : "s"} loaded.`;
+  dbStatus.textContent = `Connected to table "${TABLE}". Loaded ${rows.length} row${rows.length === 1 ? "" : "s"}.`;
 
   rows.forEach((row) => {
     const tr = document.createElement("tr");
@@ -80,10 +75,8 @@ async function addRow(raw) {
   const row = normalizeRow(raw);
   if (!isValidRow(row)) return { ok: false, error: "Invalid row format." };
 
-  const { error } = await supabase.from("shops").insert([row]);
-  if (error) {
-    return { ok: false, error: error.message };
-  }
+  const { error } = await supabase.from(TABLE).insert([row]);
+  if (error) return { ok: false, error: error.message };
 
   await renderTable();
   return { ok: true, error: null };
@@ -159,7 +152,7 @@ rowsEl.addEventListener("click", async (event) => {
   const id = target.getAttribute("data-delete-id");
   if (!id) return;
 
-  const { error } = await supabase.from("shops").delete().eq("id", Number(id));
+  const { error } = await supabase.from(TABLE).delete().eq("id", Number(id));
   if (error) {
     uploadMessage.textContent = `Delete failed: ${error.message}`;
     return;
@@ -191,6 +184,8 @@ uploadBtn.addEventListener("click", async () => {
   uploadMessage.textContent = `Uploaded ${count} rows to Supabase.`;
   csvInput.value = "";
 });
+
+reloadBtn.addEventListener("click", () => renderTable());
 
 downloadBtn.addEventListener("click", async () => {
   const { rows } = await getRows();

@@ -2,21 +2,24 @@
 
 **Tagline:** Shop with a purpose.
 
-## Current build (Supabase connected)
+## What was cleaned up
 
-- Public homepage with Version B search and live suggestions.
-- Admin page with add/delete/upload/export features.
-- Admin login credentials:
-  - Username: `BigJack`
-  - Password: `SimgaTung123`
-- Shared data now comes from Supabase table: `shops`.
-- Supabase project URL in `config.js`:
-  - `https://jqwyadsjhgbpqcauapwv.supabase.co`
+- Website and admin now share one configurable Supabase table name via `config.js`.
+- Admin has a **Reload** button and clearer DB status/errors.
+- Homepage now shows explicit connection status and table name.
+- Unnecessary Next.js demo files were removed to keep this as a clean static + Supabase project.
 
-## Required Supabase table
+## Supabase config
 
-Create table `shops` with columns:
-- `id` (bigint identity, primary key)
+In `config.js`:
+
+- `window.SHOPPSAFE_SUPABASE_URL`
+- `window.SHOPPSAFE_SUPABASE_PUBLISHABLE_KEY`
+- `window.SHOPPSAFE_SUPABASE_TABLE` (default: `shops`)
+
+## Required table columns
+
+- `id` (bigint identity primary key)
 - `issue` (text)
 - `name` (text)
 - `reason` (text)
@@ -33,23 +36,8 @@ Open:
 - http://localhost:8000/index.html
 - http://localhost:8000/admin.html
 
-## Important
+## If data still doesn't appear
 
-If inserts/deletes fail, update Supabase RLS policies to allow appropriate access.
-
-
-## Troubleshooting
-
-- Admin page now shows live database status and explicit Supabase error messages.
-- Homepage shows Supabase fetch errors directly under the search bar if connection/RLS fails.
-
-
-## Connection string
-
-Use Supabase shared pooler for server-side DB tools:
-
-```
-postgresql://postgres.jqwyadsjhgbpqcauapwv:[YOUR-PASSWORD]@aws-1-us-east-1.pooler.supabase.com:6543/postgres
-```
-
-Replace `[YOUR-PASSWORD]` with your database password.
+1. Check admin status line for exact DB error.
+2. Make sure your Supabase table name matches `SHOPPSAFE_SUPABASE_TABLE`.
+3. Confirm RLS policies allow `select`, `insert`, and `delete` for your current auth mode.
