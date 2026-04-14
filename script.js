@@ -1,13 +1,16 @@
+const STORAGE_KEY = "shoppsafe_admin_data";
+
 const issueDatabase = {
   "israel war": [
     { name: "No War Store", url: "https://example.com/no-war-store", reason: "Public anti-war neutrality statement.", affiliate: false },
   ],
+  vegan: [
+    { name: "Plant Pantry", url: "https://example.com/plant-pantry", reason: "100% vegan catalog.", affiliate: true },
+  ],
+  "animal testing": [
+    { name: "Cruelty-Free Beauty Hub", url: "https://example.com/cruelty-free", reason: "Cruelty-free policy.", affiliate: false },
+  ],
 };
-
-const supabase = window.supabase.createClient(
-  window.SHOPPSAFE_SUPABASE_URL,
-  window.SHOPPSAFE_SUPABASE_PUBLISHABLE_KEY
-);
 
 const form = document.getElementById("issue-form");
 const issueInput = document.getElementById("issue-input");
@@ -17,48 +20,35 @@ const resultsSection = document.getElementById("results-section");
 const resultsCopy = document.getElementById("results-copy");
 const resultsList = document.getElementById("results-list");
 
-let cachedData = {};
-
 const normalizeIssue = (text) => text.trim().toLowerCase();
 
-async function fetchSupabaseRows() {
-  const { data, error } = await supabase
-    .from("shops")
-    .select("id, issue, name, reason, url, affiliate")
-    .order("id", { ascending: true });
-
-  if (error) {
-    return { rows: [], error: error.message };
+function getAdminRows() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
   }
-
-  return { rows: data || [], error: null };
 }
 
-async function refreshData() {
+function getCombinedData() {
   const combined = JSON.parse(JSON.stringify(issueDatabase));
-  const { rows, error } = await fetchSupabaseRows();
-
-  if (error) {
-    issuesHint.textContent = `Database fetch failed: ${error}`;
-    cachedData = combined;
-    return;
-  }
-
-  rows.forEach((row) => {
+  getAdminRows().forEach((row) => {
     const issue = normalizeIssue(row.issue || "");
     if (!issue) return;
     combined[issue] ||= [];
     combined[issue].push({
-      id: row.id,
       name: row.name,
       url: row.url,
       reason: row.reason,
       affiliate: !!row.affiliate,
     });
   });
+  return combined;
+}
 
-  cachedData = combined;
-  issuesHint.textContent = `Available social issues: ${Object.keys(cachedData).sort().join(", ")}`;
+function getAllIssues() {
+  return Object.keys(getCombinedData()).sort();
 }
 
 function hideSuggestions() {
@@ -70,11 +60,7 @@ function renderSuggestions(query) {
   const value = normalizeIssue(query);
   if (!value) return hideSuggestions();
 
-  const matches = Object.keys(cachedData)
-    .sort()
-    .filter((issue) => issue.includes(value))
-    .slice(0, 8);
-
+  const matches = getAllIssues().filter((issue) => issue.includes(value)).slice(0, 8);
   suggestionsEl.innerHTML = "";
   if (!matches.length) return hideSuggestions();
 
@@ -93,7 +79,7 @@ function renderSuggestions(query) {
 }
 
 function renderResults(issue) {
-  const shops = cachedData[issue];
+  const shops = getCombinedData()[issue];
   resultsList.innerHTML = "";
 
   if (!shops?.length) {
@@ -112,9 +98,8 @@ function renderResults(issue) {
   resultsSection.classList.remove("hidden");
 }
 
-form.addEventListener("submit", async (event) => {
+form.addEventListener("submit", (event) => {
   event.preventDefault();
-  await refreshData();
   renderResults(normalizeIssue(issueInput.value));
   hideSuggestions();
 });
@@ -122,7 +107,5 @@ form.addEventListener("submit", async (event) => {
 issueInput.addEventListener("input", () => renderSuggestions(issueInput.value));
 issueInput.addEventListener("blur", () => setTimeout(hideSuggestions, 120));
 
-(async () => {
-  await refreshData();
-  document.getElementById("year").textContent = new Date().getFullYear();
-})();
+issuesHint.textContent = `Available social issues: ${getAllIssues().join(", ")}`;
+document.getElementById("year").textContent = new Date().getFullYear();

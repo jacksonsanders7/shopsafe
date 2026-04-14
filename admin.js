@@ -1,11 +1,7 @@
 const ADMIN_USERNAME = "BigJack";
 const ADMIN_PASSWORD = "SimgaTung123";
+const STORAGE_KEY = "shoppsafe_admin_data";
 const SESSION_KEY = "shoppsafe_admin_logged_in";
-
-const supabase = window.supabase.createClient(
-  window.SHOPPSAFE_SUPABASE_URL,
-  window.SHOPPSAFE_SUPABASE_PUBLISHABLE_KEY
-);
 
 const loginCard = document.getElementById("login-card");
 const adminCard = document.getElementById("admin-card");
@@ -15,12 +11,24 @@ const rowsEl = document.getElementById("rows");
 const loginMessage = document.getElementById("login-message");
 const entryMessage = document.getElementById("entry-message");
 const uploadMessage = document.getElementById("upload-message");
-const dbStatus = document.getElementById("db-status");
 
 const csvInput = document.getElementById("csv-file");
 const uploadBtn = document.getElementById("upload-btn");
 const downloadBtn = document.getElementById("download-btn");
 const logoutBtn = document.getElementById("logout-btn");
+
+function getRows() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveRows(rows) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(rows));
+}
 
 function normalizeRow(row) {
   return {
@@ -45,48 +53,23 @@ function isValidRow(row) {
   return !!(row.issue && row.name && row.reason && row.url && isValidUrl(row.url));
 }
 
-async function getRows() {
-  const { data, error } = await supabase
-    .from("shops")
-    .select("id, issue, name, reason, url, affiliate")
-    .order("id", { ascending: true });
-
-  if (error) {
-    return { rows: [], error: error.message };
-  }
-
-  return { rows: data || [], error: null };
-}
-
-async function renderTable() {
+function renderTable() {
   rowsEl.innerHTML = "";
-  const { rows, error } = await getRows();
-
-  if (error) {
-    dbStatus.textContent = `Database read failed: ${error}`;
-    return;
-  }
-
-  dbStatus.textContent = `Connected. ${rows.length} row${rows.length === 1 ? "" : "s"} loaded.`;
-
-  rows.forEach((row) => {
+  getRows().forEach((row, idx) => {
     const tr = document.createElement("tr");
-    tr.innerHTML = `<td>${row.issue}</td><td>${row.name}</td><td>${row.reason}</td><td><a href="${row.url}" target="_blank" rel="noopener noreferrer">Link</a></td><td>${row.affiliate ? "Yes" : "No"}</td><td><button type="button" data-delete-id="${row.id}">Delete</button></td>`;
+    tr.innerHTML = `<td>${row.issue}</td><td>${row.name}</td><td>${row.reason}</td><td><a href="${row.url}" target="_blank" rel="noopener noreferrer">Link</a></td><td>${row.affiliate ? "Yes" : "No"}</td><td><button type="button" data-delete="${idx}">Delete</button></td>`;
     rowsEl.appendChild(tr);
   });
 }
 
-async function addRow(raw) {
+function addRow(raw) {
   const row = normalizeRow(raw);
-  if (!isValidRow(row)) return { ok: false, error: "Invalid row format." };
-
-  const { error } = await supabase.from("shops").insert([row]);
-  if (error) {
-    return { ok: false, error: error.message };
-  }
-
-  await renderTable();
-  return { ok: true, error: null };
+  if (!isValidRow(row)) return false;
+  const rows = getRows();
+  rows.push(row);
+  saveRows(rows);
+  renderTable();
+  return true;
 }
 
 function setLoggedIn(value) {
@@ -129,7 +112,6 @@ loginForm.addEventListener("submit", (event) => {
   event.preventDefault();
   const u = document.getElementById("username").value;
   const p = document.getElementById("password").value;
-
   if (u === ADMIN_USERNAME && p === ADMIN_PASSWORD) {
     loginMessage.textContent = "";
     setLoggedIn(true);
@@ -138,34 +120,28 @@ loginForm.addEventListener("submit", (event) => {
   }
 });
 
-entryForm.addEventListener("submit", async (event) => {
+entryForm.addEventListener("submit", (event) => {
   event.preventDefault();
-  const result = await addRow({
+  const ok = addRow({
     issue: document.getElementById("issue").value,
     name: document.getElementById("storeName").value,
     reason: document.getElementById("description").value,
     url: document.getElementById("url").value,
     affiliate: document.getElementById("affiliate").checked,
   });
-
-  entryMessage.textContent = result.ok ? "Row added to Supabase." : `Insert failed: ${result.error}`;
-  if (result.ok) entryForm.reset();
+  entryMessage.textContent = ok ? "Row added." : "Invalid row. Check all fields and URL.";
+  if (ok) entryForm.reset();
 });
 
-rowsEl.addEventListener("click", async (event) => {
+rowsEl.addEventListener("click", (event) => {
   const target = event.target;
   if (!(target instanceof HTMLElement)) return;
-
-  const id = target.getAttribute("data-delete-id");
-  if (!id) return;
-
-  const { error } = await supabase.from("shops").delete().eq("id", Number(id));
-  if (error) {
-    uploadMessage.textContent = `Delete failed: ${error.message}`;
-    return;
-  }
-
-  await renderTable();
+  const index = target.getAttribute("data-delete");
+  if (index === null) return;
+  const rows = getRows();
+  rows.splice(Number(index), 1);
+  saveRows(rows);
+  renderTable();
 });
 
 uploadBtn.addEventListener("click", async () => {
@@ -183,18 +159,15 @@ uploadBtn.addEventListener("click", async () => {
   }
 
   let count = 0;
-  for (const row of parsed) {
-    const result = await addRow(row);
-    if (result.ok) count += 1;
-  }
-
-  uploadMessage.textContent = `Uploaded ${count} rows to Supabase.`;
+  parsed.forEach((row) => {
+    if (addRow(row)) count += 1;
+  });
+  uploadMessage.textContent = `Uploaded ${count} rows.`;
   csvInput.value = "";
 });
 
-downloadBtn.addEventListener("click", async () => {
-  const { rows } = await getRows();
-  const blob = new Blob([JSON.stringify(rows, null, 2)], { type: "application/json" });
+downloadBtn.addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(getRows(), null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;

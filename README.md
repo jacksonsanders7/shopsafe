@@ -2,26 +2,19 @@
 
 **Tagline:** Shop with a purpose.
 
-## Current build (Supabase connected)
+## Current build
 
-- Public homepage with Version B search and live suggestions.
-- Admin page with add/delete/upload/export features.
+- Public homepage with **Version B** search: live, clickable issue suggestions.
+- Admin page accessible from the top-right ☑ Admin button.
 - Admin login credentials:
   - Username: `BigJack`
   - Password: `SimgaTung123`
-- Shared data now comes from Supabase table: `shops`.
-- Supabase project URL in `config.js`:
-  - `https://jqwyadsjhgbpqcauapwv.supabase.co`
-
-## Required Supabase table
-
-Create table `shops` with columns:
-- `id` (bigint identity, primary key)
-- `issue` (text)
-- `name` (text)
-- `reason` (text)
-- `url` (text)
-- `affiliate` (boolean)
+- Admin spreadsheet actions:
+  - add row manually
+  - delete row
+  - upload CSV (`issue,name,reason,url,affiliate`)
+  - download JSON backup
+- Data is persisted in browser `localStorage`.
 
 ## Run locally
 
@@ -33,23 +26,6 @@ Open:
 - http://localhost:8000/index.html
 - http://localhost:8000/admin.html
 
-## Important
+## Prototype note
 
-If inserts/deletes fail, update Supabase RLS policies to allow appropriate access.
-
-
-## Troubleshooting
-
-- Admin page now shows live database status and explicit Supabase error messages.
-- Homepage shows Supabase fetch errors directly under the search bar if connection/RLS fails.
-
-
-## Connection string
-
-Use Supabase shared pooler for server-side DB tools:
-
-```
-postgresql://postgres.jqwyadsjhgbpqcauapwv:[YOUR-PASSWORD]@aws-1-us-east-1.pooler.supabase.com:6543/postgres
-```
-
-Replace `[YOUR-PASSWORD]` with your database password.
+Credentials are intentionally frontend-only for demo purposes. Use server-side auth before production.
