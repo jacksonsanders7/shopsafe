@@ -26,14 +26,12 @@
 
       <section class="card hidden" id="admin-card">
         <div class="admin-header">
-          <h2>Data Spreadsheet (Supabase)</h2>
+          <h2>Data Spreadsheet</h2>
           <div class="admin-actions">
-            <button id="reload-btn" type="button">Reload</button>
             <button id="download-btn" type="button">Download JSON</button>
             <button id="logout-btn" type="button">Log out</button>
           </div>
         </div>
-        <p id="db-status" class="hint"></p>
 
         <form id="entry-form" class="entry-grid">
           <div><label for="issue">Social issue</label><input id="issue" type="text" required /></div>
@@ -66,8 +64,6 @@
       <p><a href="index.html">← Back to homepage</a></p>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="config.js"></script>
     <script src="admin.js"></script>
   </body>
 </html>

@@ -2,29 +2,19 @@
 
 **Tagline:** Shop with a purpose.
 
-## What was cleaned up
+## Current build
 
-- Website and admin now share one configurable Supabase table name via `config.js`.
-- Admin has a **Reload** button and clearer DB status/errors.
-- Homepage now shows explicit connection status and table name.
-- Unnecessary Next.js demo files were removed to keep this as a clean static + Supabase project.
-
-## Supabase config
-
-In `config.js`:
-
-- `window.SHOPPSAFE_SUPABASE_URL`
-- `window.SHOPPSAFE_SUPABASE_PUBLISHABLE_KEY`
-- `window.SHOPPSAFE_SUPABASE_TABLE` (default: `shops`)
-
-## Required table columns
-
-- `id` (bigint identity primary key)
-- `issue` (text)
-- `name` (text)
-- `reason` (text)
-- `url` (text)
-- `affiliate` (boolean)
+- Public homepage with **Version B** search: live, clickable issue suggestions.
+- Admin page accessible from the top-right ☑ Admin button.
+- Admin login credentials:
+  - Username: `BigJack`
+  - Password: `SimgaTung123`
+- Admin spreadsheet actions:
+  - add row manually
+  - delete row
+  - upload CSV (`issue,name,reason,url,affiliate`)
+  - download JSON backup
+- Data is persisted in browser `localStorage`.
 
 ## Run locally
 
@@ -36,8 +26,6 @@ Open:
 - http://localhost:8000/index.html
 - http://localhost:8000/admin.html
 
-## If data still doesn't appear
+## Prototype note
 
-1. Check admin status line for exact DB error.
-2. Make sure your Supabase table name matches `SHOPPSAFE_SUPABASE_TABLE`.
-3. Confirm RLS policies allow `select`, `insert`, and `delete` for your current auth mode.
+Credentials are intentionally frontend-only for demo purposes. Use server-side auth before production.
